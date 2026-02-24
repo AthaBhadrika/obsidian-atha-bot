@@ -1668,7 +1668,8 @@ app.post('/api/logout', (req, res) => {
     return res.json({ success: true });
 });
 
-app.listen(PORT, () => {
+// Untuk Vercel (serverless), kita export app saja
+module.exports = app;
   console.log(chalk.red(`Server Online Enjoy Freind`));
 });
 
