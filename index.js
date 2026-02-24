@@ -1669,17 +1669,17 @@ app.post('/api/logout', (req, res) => {
 });
 
 // Untuk Vercel (serverless), kita export app saja
-module.exports = app;
-  console.log(chalk.red(`Server Online Enjoy Freind`));
-});
+console.log(chalk.red('Server Online Enjoy Freind'));
 
-module.exports = { 
-  loadAkses, 
-  saveAkses, 
-  isOwner, 
-  isAuthorized,
-  saveUsers,
-  getUsers
+// SATU module.exports yang berisi SEMUA
+module.exports = {
+    app,  // <-- INI PENTING! app harus diexport
+    loadAkses,
+    saveAkses,
+    isOwner,
+    isAuthorized,
+    saveUsers,
+    getUsers
 };
 
 // ==================== FUNCTIONS ==================== //
